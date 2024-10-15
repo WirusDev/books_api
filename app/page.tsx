@@ -6,17 +6,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Home() {
-  const key: number = 0;
   interface Book {
     volumeInfo: {
-      title: string;
-      authors: [string];
-      description: string;
-      imageLinks: {
-        smallThumbnail: string;
+      title?: string;
+      authors?: string[];
+      description?: string;
+      imageLinks?: {
+        smallThumbnail?: string;
       };
-      language: string;
-      infoLink: string;
+      language?: string;
+      infoLink?: string;
     };
     id: string;
   }
@@ -29,14 +28,14 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = async (event: any) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setBooks({ items: [] });
     setLoading(true);
     setError(null);
 
-    const formData = new FormData(event.target);
+    const formData = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(formData);
 
     try {
@@ -49,7 +48,7 @@ export default function Home() {
     }
   };
 
-  function truncateString(str: string | any[], maxLength: number) {
+  function truncateString(str: string, maxLength: number) {
     if (!str) {
       return '';
     }
@@ -97,7 +96,7 @@ export default function Home() {
       )}
       {!error && !loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 m-4">
-          {books.items.map((book) => (
+          {books.items.map((book: Book) => (
             <div
               className="card lg:card-side  bg-gray-100 w-full shadow-xl"
               key={book.id}
@@ -108,7 +107,7 @@ export default function Home() {
                     width={300}
                     height={600}
                     src={book.volumeInfo.imageLinks.smallThumbnail}
-                    alt={book.volumeInfo.title}
+                    alt={book.volumeInfo.title ?? 'No alt available'}
                     className="h-full w-max rounded-l-lg"
                   />
                 ) : (
@@ -119,18 +118,28 @@ export default function Home() {
               </figure>
               <div className="card-body text-black">
                 <h2 className="card-title">
-                  {truncateString(book.volumeInfo.title, 30)}
+                  {truncateString(
+                    book.volumeInfo.title ?? 'No title available',
+                    30,
+                  )}
                 </h2>
-                <p>{book.volumeInfo.authors}</p>
+                <p>
+                  {book.volumeInfo?.authors?.join(', ') || 'Unknown Author'}
+                </p>
                 <Link
                   className="link link-secondary"
-                  href={book.volumeInfo.infoLink}
+                  href={book.volumeInfo.infoLink ?? 'No Link available'}
                 >
                   More info
                 </Link>
               </div>
             </div>
           ))}
+        </div>
+      )}
+      {!error && !loading && books.items.length === 0 && (
+        <div className="text-center">
+          <p>No books found for your search.</p>
         </div>
       )}
     </section>
