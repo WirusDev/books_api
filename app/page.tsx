@@ -98,7 +98,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 m-4">
           {books.items.map((book: Book) => (
             <div
-              className="card lg:card-side  bg-gray-100 w-full shadow-xl"
+              className="card card-side  bg-gray-100 w-full shadow-xl"
               key={book.id}
             >
               <figure className="">
