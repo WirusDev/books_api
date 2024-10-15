@@ -1,7 +1,7 @@
-// app/api/books/route.ts
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
-export async function GET(request: Request) {
+export const runtime = 'nodejs';
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const q = searchParams.get('q');
 
@@ -14,6 +14,17 @@ export async function GET(request: Request) {
 
   try {
     const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
+
+    console.log('API Key is defined:', !!apiKey);
+
+    if (!apiKey) {
+      console.error('GOOGLE_BOOKS_API_KEY is not defined');
+      return NextResponse.json(
+        { error: 'Internal Server Error' },
+        { status: 500 },
+      );
+    }
+
     const response = await fetch(
       `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
         q,
