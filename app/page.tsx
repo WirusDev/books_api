@@ -111,7 +111,7 @@ export default function Home() {
                     className="h-full w-max rounded-l-lg"
                   />
                 ) : (
-                  <div className="flex h-full w-[35%]   items-center justify-center bg-gray-200">
+                  <div className="flex h-[100px] w-[35%]   items-center justify-center ">
                     <span>No Image Available</span>
                   </div>
                 )}

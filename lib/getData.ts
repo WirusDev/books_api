@@ -1,34 +1,17 @@
+// lib/getData.ts
 export async function getData(bookName: string) {
   try {
-    const res = await fetch(
-      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-        bookName,
-      )}&key=${process.env.NEXT_PUBLIC_API_KEY}`,
-    );
+    const res = await fetch(`/api/books?q=${encodeURIComponent(bookName)}`);
 
     if (!res.ok) {
-      // Non-200 HTTP response
       const errorInfo = await res.json();
-      throw new Error(
-        `Google Books API error: ${errorInfo.error?.message || res.statusText}`,
-      );
+      throw new Error(errorInfo.error || 'Failed to fetch data');
     }
 
     const json = await res.json();
-
-    if (!json.items || json.items.length === 0) {
-      // No books found
-      return { items: [] };
-    }
-
     return json;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Error fetching data:', error.message);
-      throw error;
-    } else {
-      console.error('An unexpected error occurred:', error);
-      throw new Error('An unexpected error occurred');
-    }
+  } catch (error: any) {
+    console.error('Error fetching data in getData:', error.message);
+    throw new Error(error.message || 'Failed to fetch data from API');
   }
 }
